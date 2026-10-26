@@ -32,31 +32,35 @@ Avaliação de um ramo convolucional temporal (TCN), comparado com GRU, controle
 
 Esse marco demonstra comparação com baselines, análise de incerteza e capacidade de recusar complexidade quando a evidência não a sustenta.
 
-## Como os blocos se conectam
+## Arquitetura em três frentes
+
+| Frente | Blocos de construção | Propósito |
+|---|---|---|
+| **Separação espectral** | CEEMDAN | Representar diferentes escalas de variação da série |
+| **Engenharia de dados** | Preparação temporal, segmentação por HMM e exploração com Ball Mapper | Organizar sequências, caracterizar regimes e investigar a geometria das trajetórias |
+| **Machine Learning** | Autoencoder, especialistas GRU, MoE e Optuna | Aprender representações, especializar previsões e explorar hiperparâmetros |
 
 ```mermaid
 flowchart LR
-    A[Histórico de mercado] --> B[Preparação temporal]
-    B --> C[Representação sequencial]
-    B --> D[Roteamento por regime]
-    C --> E[Especialistas GRU]
-    D --> E
-    E --> F[Agregação entre inicializações]
-    F --> G[Avaliação e diagnóstico]
-    H[Ramo TCN experimental] -. Comparação separada .-> G
+    A[Separação espectral] --> B[Engenharia de dados]
+    B --> C[Machine Learning]
+    C --> D[Avaliação e diagnóstico]
 ```
 
-O diagrama é conceitual. O ramo TCN foi avaliado separadamente e não representa uma extensão aprovada da arquitetura principal.
+Visão conceitual das competências do projeto. **Ball Mapper pertence a uma linha experimental separada, com verificações técnicas sintéticas; não integra o MoE dos resultados publicados.** Optuna foi utilizado no desenvolvimento histórico, sem nova busca em cada comparação.
+
+Veja [o papel e o motivo de cada bloco](ARCHITECTURE.md).
 
 ## Competências demonstradas
 
-- **Modelagem temporal:** GRU, autoencoders, mistura de especialistas e avaliação de TCN.
+- **Processamento de sinais e dados:** CEEMDAN, preparação de séries, regimes HMM e exploração geométrica com Ball Mapper.
+- **Modelagem e otimização:** GRU, autoencoders, mistura de especialistas, Optuna e avaliação de TCN.
 - **Experimentação:** controles comparáveis, ablações e separação entre ganho aparente e contribuição incremental.
 - **Avaliação:** acerto direcional, acurácia balanceada, erros de regressão e bootstrap em blocos.
 - **Engenharia de ML:** execução em CPU/GPU, persistência e recarga de modelos, verificação de integridade e retomada de execuções.
 - **Decisão técnica:** avançar, limitar ou arquivar componentes conforme a evidência disponível.
 
-**Tecnologias utilizadas no projeto:** Python, TensorFlow/Keras, NumPy, pandas, scikit-learn e CUDA.
+**Tecnologias utilizadas no projeto:** Python, TensorFlow/Keras, NumPy, pandas, scikit-learn, Optuna e CUDA.
 
 ## Leia os detalhes públicos
 
