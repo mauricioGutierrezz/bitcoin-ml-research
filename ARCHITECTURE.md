@@ -2,31 +2,69 @@
 
 [← Apresentação](README.md)
 
-A evolução do projeto é apresentada pelas responsabilidades acrescentadas ao sistema. Cada bloco responde a uma necessidade concreta; sua presença na arquitetura não implica benefício isolado comprovado.
+O projeto combina três frentes de trabalho: **separação espectral**, **engenharia de dados** e **Machine Learning**. Essa organização mostra o problema que cada componente procura resolver, sem expor a receita de implementação.
 
-| Bloco | Responsabilidade | Motivo da escolha |
+## 1 · Separação espectral — CEEMDAN
+
+**Responsabilidade:** decompor a série temporal em componentes que representam diferentes escalas de variação.
+
+**Por quê:** o movimento observado reúne oscilações de curto prazo e estruturas mais lentas. A decomposição permite trabalhar com essas escalas na construção da representação dos dados.
+
+**Competências demonstradas:** processamento de sinais, decomposição adaptativa de séries e construção de representações para modelos temporais.
+
+CEEMDAN integra a engenharia legada. Sua presença não demonstra, isoladamente, ganho preditivo; a proveniência integral das componentes históricas não foi certificada de ponta a ponta.
+
+## 2 · Engenharia de dados — séries, regimes e geometria
+
+| Componente | Papel | Motivo |
 |---|---|---|
-| Preparação temporal | Organizar sequências e separar etapas de seleção, ajuste e avaliação | Respeitar a ordem do problema e tornar comparações auditáveis |
-| Representação sequencial | Aprender uma representação com autoencoder baseado em GRU | Explorar estrutura temporal antes da tarefa supervisionada |
-| Roteamento por regime | Selecionar o especialista conforme o contexto estimado | Investigar respostas distintas a contextos de mercado |
-| Especialistas temporais | Estimar o retorno a partir da representação aprendida | Distribuir a tarefa entre modelos especializados |
-| Objetivo supervisionado | Considerar erro de retorno e informação direcional | Alinhar o treinamento às duas dimensões avaliadas |
-| Agregação | Combinar saídas de diferentes inicializações | Avaliar uma previsão agregada sem escolher a melhor seed |
-| Avaliação e integridade | Comparar controles, períodos, erros e artefatos persistidos | Sustentar decisões com evidência e rastreabilidade |
+| Preparação de séries temporais | Organizar janelas, alinhar entradas e alvos e separar etapas cronológicas | Tornar o problema de previsão consistente e as comparações auditáveis |
+| HMM | Segmentar a série em regimes latentes de mercado | Representar mudanças de contexto em vez de tratar todo o histórico como homogêneo |
+| Ball Mapper | Explorar a geometria das trajetórias e atributos de sua representação em grafo | Investigar se a estrutura de vizinhança acrescenta informação útil aos modelos |
 
-## O que mudou em cada marco
+**Distinção de responsabilidades:** o HMM caracteriza regimes; o roteador do MoE seleciona especialistas. São componentes com papéis diferentes.
 
-**Base especializada:** representação sequencial, roteamento e especialistas formam o núcleo. O encoder pré-treinado permanece congelado na comparação histórica destacada.
+**Ball Mapper é uma linha experimental separada:** há implementação e verificações técnicas em dados sintéticos, mas não há resultado histórico de eficácia apresentado neste portfólio. Ele não compõe o MoE avaliado nos resultados publicados.
 
-**Evolução do treinamento:** a arquitetura foi preservada para comparar objetivos supervisionados. Isso ajuda a interpretar a mudança observada, embora a seleção de épocas também possa mudar em consequência do objetivo.
+**Competências demonstradas:** engenharia de features, preparação temporal, modelagem de regimes e exploração de representações geométricas de dados.
 
-**Avaliação ampliada:** um ramo TCN independente passou a ser comparado com controles e combinações. O protocolo pergunta se a rede acrescenta informação útil além de uma transformação simples das previsões existentes. O resultado não justificou sua incorporação.
+## 3 · Machine Learning — representação, especialização e otimização
 
-## Decisões de engenharia
+| Componente | Papel | Motivo |
+|---|---|---|
+| Autoencoder com GRU | Aprender uma representação sequencial por reconstrução antes da supervisão | Explorar estrutura temporal na etapa de pré-treinamento |
+| Especialistas GRU | Estimar retornos em contextos distintos | Investigar respostas especializadas às mudanças do mercado |
+| Mixture of Experts (MoE) | Coordenar o roteamento e as previsões dos especialistas | Organizar a especialização em uma arquitetura modular |
+| Optuna | Apoiar a busca de hiperparâmetros no desenvolvimento histórico | Explorar configurações de forma sistemática |
+| Objetivo supervisionado | Considerar erro de retorno e informação direcional | Alinhar o treinamento às dimensões avaliadas |
+| Agregação entre inicializações | Combinar previsões de diferentes seeds | Avaliar uma saída agregada sem escolher a melhor inicialização |
 
-- Manter separados os experimentos e seus artefatos para evitar confundir configurações e resultados.
-- Conferir persistência, recarga e integridade dos artefatos nas verificações registradas.
-- Preservar falhas e correções de execução, em vez de ocultar tentativas que não chegaram à avaliação.
-- Tratar uma melhoria frente a um modelo como insuficiente quando um controle mais simples explica o mesmo ganho.
+O encoder permanece congelado na comparação controlada destacada. O uso de Optuna pertence ao desenvolvimento histórico; não implica que cada experimento posterior tenha realizado uma nova busca.
 
-Detalhes de features, hiperparâmetros, fórmulas de treinamento, regras exatas de roteamento e artefatos de implementação não são divulgados.
+**Competências demonstradas:** aprendizado de representações, redes recorrentes, otimização de hiperparâmetros, arquiteturas com especialistas e desenho de objetivos de treinamento.
+
+## Como as frentes se relacionam
+
+```mermaid
+flowchart TB
+    A[Histórico de mercado] --> B[Separação espectral: CEEMDAN]
+    B --> C[Engenharia de dados: janelas e features]
+    C --> D[Segmentação por regimes: HMM]
+    C --> E[Machine Learning: autoencoder e especialistas GRU]
+    D -. Contexto de regime .-> E
+    E --> F[MoE: roteamento e previsão]
+    O[Optuna: otimização histórica] -. Configurações .-> E
+    F --> G[Avaliação temporal e integridade]
+    A --> H[Ball Mapper: linha experimental separada]
+    H -. Verificação técnica sintética .-> I[Representações geométricas e de grafo]
+```
+
+Diagrama conceitual de responsabilidades. Ele não especifica todas as entradas, a ordem completa de execução ou uma integração aprovada entre todas as linhas.
+
+## Validação que acompanha a arquitetura
+
+A avaliação atravessa os três blocos: controles comparáveis, métricas de direção e regressão, diagnóstico por período, análise de incerteza e verificação dos artefatos persistidos.
+
+Os três marcos e seus resultados permanecem na [apresentação](README.md) e em [resultados](RESULTS.md). O ramo TCN foi avaliado separadamente e não demonstrou benefício incremental que justificasse sua incorporação ao MoE.
+
+Detalhes de features, hiperparâmetros, fórmulas de treinamento, regras exatas de roteamento e artefatos de implementação permanecem privados.
