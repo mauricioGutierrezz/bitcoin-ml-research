@@ -69,9 +69,9 @@ Veja [o papel e o motivo de cada bloco](ARCHITECTURE.md).
 
 ## Em imagens
 
-**Q2 2026 contra buy & hold.** Em nove blocos não sobrepostos de dez dias, o modelo long/short acumulou +43,3% bruto contra −14,0% do buy & hold, com drawdown máximo de −10,0% contra −28,4%. Leitura exploratória: sem custos, slippage ou funding, e esse período foi usado no desenvolvimento da V2. Não é validação fora da amostra.
+**Modelo contra buy & hold, janela completa.** Em blocos não sobrepostos de 10 dias entre 23/11/2025 e 07/08/2026, o buy & hold perdeu de 25% a 31%, conforme o dia de início do primeiro bloco. O modelo long/short terminou positivo em 8 de 10 inícios possíveis (mediana +19%, de −29% a +73%). Leitura exploratória e retrospectiva: é uma janela de baixa, em que uma estratégia sempre vendida também ganha (+23% no início padrão, acima dos +15% do modelo). Sem custos, slippage ou funding, e com acerto direcional de 54% em 258 origens. Não é teste prospectivo e não indica rentabilidade.
 
-![Modelo vs buy & hold no Q2 2026](figuras/q2_modelo_vs_buyhold.svg)
+![Modelo vs buy & hold na janela completa](figuras/modelo_vs_buyhold_janela_completa.svg)
 
 **Verificação de vazamento (E0).** Com a base causal, o AUC por fold fica igual ou acima da série legada nos três maiores folds (0,74 vs 0,67; 0,46 vs 0,39; 0,61 vs 0,57). Isso é o oposto do padrão que um vazamento produziria. As médias não são significativas nesta janela de baixa, e o resultado não permite concluir sobre o sinal.
 
