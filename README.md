@@ -67,6 +67,18 @@ Veja [o papel e o motivo de cada bloco](ARCHITECTURE.md).
 - [Arquitetura por blocos e motivos das escolhas](ARCHITECTURE.md)
 - [Resultados, contexto de comparação e limites](RESULTS.md)
 
+## Em imagens
+
+**Q2 2026 contra buy & hold.** Em nove blocos não sobrepostos de dez dias, o modelo long/short acumulou +43,3% bruto contra −14,0% do buy & hold, com drawdown máximo de −10,0% contra −28,4%. Leitura exploratória: sem custos, slippage ou funding, e esse período foi usado no desenvolvimento da V2. Não é validação fora da amostra.
+
+![Modelo vs buy & hold no Q2 2026](figuras/q2_modelo_vs_buyhold.svg)
+
+**Verificação de vazamento (E0).** Com a base causal, o AUC por fold fica igual ou acima da série legada nos três maiores folds (0,74 vs 0,67; 0,46 vs 0,39; 0,61 vs 0,57). Isso é o oposto do padrão que um vazamento produziria. As médias não são significativas nesta janela de baixa, e o resultado não permite concluir sobre o sinal.
+
+![AUC por fold na E0](figuras/e0_auc_por_fold.svg)
+
+![Contexto de mercado](figuras/btc_contexto.svg)
+
 ## Escopo da evidência
 
 Os números são históricos e exploratórios. Os dois recortes apresentados têm protocolos e coberturas distintos e não formam um ranking único. Não há alegação de rentabilidade, vantagem operacional ou desempenho prospectivo comprovado.
